@@ -24,18 +24,18 @@
 # end
 
 @everywhere function calcOneStage(
-		betta::Float64, dtX::Float64,
-		testMeshDistrX::mesh2d_shared, testfields2dX::fields2d_shared, thermoX::THERMOPHYSICS, cellsThreadsX::SharedArray{Int64,2},
+		betta::Float64, dtX::Float64, flowTime::Float64, 
+		testMeshDistrX::mesh2d_shared, testfields2dX::fields2d_shared, thermoX::THERMOPHYSICS, cellsThreadsX::SharedArray{Int32,2},
 		UconsCellsOldX::SharedArray{Float64,2}, iFLUXX::SharedArray{Float64,2}, UconsDiffTerm::SharedArray{Float64,2}, UconsCellsNewX::SharedArray{Float64,2})
 
 	@sync @distributed for p in workers()	
 	
-		beginCell::Int64 = cellsThreadsX[p-1,1];
-		endCell::Int64 = cellsThreadsX[p-1,2];
+		beginCell::Int32 = cellsThreadsX[p-1,1];
+		endCell::Int32 = cellsThreadsX[p-1,2];
 		#println("worker: ",p,"\tbegin cell: ",beginCell,"\tend cell: ", endCell);
 										 
 		#SecondOrderUpwindM2(beginCell ,endCell, betta, dtX, testMeshDistrX, testfields2dX, thermoX, UconsCellsOldX, iFLUXX, UconsCellsNewX);
-		SecondOrderUpwindM2(beginCell ,endCell, betta, dtX, testMeshDistrX, testfields2dX, thermoX, UconsCellsOldX, iFLUXX, UconsDiffTerm,  UconsCellsNewX);
+		SecondOrderUpwindM2(beginCell ,endCell, betta, dtX, flowTime,  testMeshDistrX, testfields2dX, thermoX, UconsCellsOldX, iFLUXX, UconsDiffTerm,  UconsCellsNewX);
 					
 	end
 			

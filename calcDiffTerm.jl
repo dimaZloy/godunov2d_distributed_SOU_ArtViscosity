@@ -1,6 +1,6 @@
 
 
-function calcDiffTerm(cellsThreadsX::SharedArray{Int64,2}, testMeshDistrX::mesh2d_shared, 
+function calcDiffTerm(cellsThreadsX::SharedArray{Int32,2}, testMeshDistrX::mesh2d_shared, 
 		testfields2dX::fields2d_shared, viscousFields2dX::viscousFields2d_shared, thermoX::THERMOPHYSICS, 
 		UCNodes::SharedArray{Float64,2}, UConsDiffCells::SharedArray{Float64,2}, UConsDiffNodes::SharedArray{Float64,2})
 
@@ -8,8 +8,8 @@ function calcDiffTerm(cellsThreadsX::SharedArray{Int64,2}, testMeshDistrX::mesh2
 
 		@sync @distributed for p in workers()	
 	
-			beginCell::Int64 = cellsThreadsX[p-1,1];
-			endCell::Int64 = cellsThreadsX[p-1,2];
+			beginCell::Int32 = cellsThreadsX[p-1,1];
+			endCell::Int32 = cellsThreadsX[p-1,2];
 			
 			nodesGradientReconstructionUconsFastSA(beginCell,endCell, testMeshDistrX, UCNodes, viscousFields2dX);	
 			
@@ -19,8 +19,8 @@ function calcDiffTerm(cellsThreadsX::SharedArray{Int64,2}, testMeshDistrX::mesh2
 		
 		@sync @distributed for p in workers()	
 	
-			beginCell::Int64 = cellsThreadsX[p-1,1];
-			endCell::Int64 = cellsThreadsX[p-1,2];
+			beginCell::Int32 = cellsThreadsX[p-1,1];
+			endCell::Int32 = cellsThreadsX[p-1,2];
 			
 			nodesDivergenceReconstructionFastSA(beginCell,endCell, testMeshDistrX,  viscousFields2dX.cdUdxCells,viscousFields2dX.cdUdyCells, viscousFields2dX.laplasUCuCells);
 			nodesDivergenceReconstructionFastSA(beginCell,endCell, testMeshDistrX,  viscousFields2dX.cdVdxCells,viscousFields2dX.cdVdyCells, viscousFields2dX.laplasUCvCells);
@@ -36,8 +36,8 @@ function calcDiffTerm(cellsThreadsX::SharedArray{Int64,2}, testMeshDistrX::mesh2
 		
 		@sync @distributed for p in workers()	
 	
-			beginCell::Int64 = cellsThreadsX[p-1,1];
-			endCell::Int64 = cellsThreadsX[p-1,2];
+			beginCell::Int32 = cellsThreadsX[p-1,1];
+			endCell::Int32 = cellsThreadsX[p-1,2];
 			
 		
 			for i = beginCell:endCell

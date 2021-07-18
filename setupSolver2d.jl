@@ -15,7 +15,7 @@ solver = SOLVER2D(
 
 solControls = CONTROLS(
 	0.1, #CFL
-	2.0e-6, # time step, 
+	2.0e-6, ##5.0e-9, # time step, 
 	0, # fixed timeStepMethod (1 - adaptive)
 	0.0,  # actual physical time to start simulation
 	4.0/sqrt(1.4)/100.0,  # actual physical time to stop simulation 
@@ -59,7 +59,7 @@ output = outputCONTROLS(
 	0, #saveResults::Int8; 
 	"residuals.dat",#fileNameResults::String;
 	"solution.dat", #fileNameResiduals::String;
-	0, ## save data to VTK
+	1, ## save data to VTK
 	"zzz"
 );
 

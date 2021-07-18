@@ -51,7 +51,7 @@ end
 
 
 @everywhere function updateVariablesSA(
-	beginCell::Int64,endCell::Int64,Gamma::Float64,
+	beginCell::Int32,endCell::Int32,Gamma::Float64,
 	 UconsCellsNew::SharedArray{Float64,2},
 	 UconsCellsOld::SharedArray{Float64,2},
 	 Delta::SharedArray{Float64,2},
@@ -94,19 +94,19 @@ end
 	residualsVector3::Array{Any,1},
 	residualsVector4::Array{Any,1},
 	residualsVectorMax::Array{Float64,1}, 
-	testMesh::mesh2d,
-	triangles::Array{Int64,2},
+	testMesh::mesh2d_Int32,
 	testFields::fields2d_shared,
+	testFieldsViscous::viscousFields2d_shared,
 	solControls::CONTROLS,
 	output::outputCONTROLS,
 	dynControls::DYNAMICCONTROLS,
-	gradDensityMagNodes::Array{Float64,1})
+	solInst::solutionCellsT)
 
 	if (dynControls.verIter == output.verbosity)
 
 
 		densityWarn = @sprintf("Density Min/Max: %f/%f", dynControls.rhoMin, dynControls.rhoMax);
-		out = @sprintf("%0.6f\t %0.6f \t %0.6f \t %0.6f \t %0.6f \t %0.6f \t %0.6f", 
+		out = @sprintf("%0.10f\t %0.10f \t %0.6f \t %0.6f \t %0.6f \t %0.6f \t %0.6f", 
 			dynControls.flowTime,
 			dynControls.tau,
 			residualsVector1[dynControls.curIter]./residualsVectorMax[1],
@@ -120,23 +120,28 @@ end
 		println(out); 
 		println(densityWarn);
 		
-		densityF = cells2nodesSolutionReconstructionWithStencilsSA(testMesh,  testFields.densityCells  )
 		
 		
 		
 		if (output.saveDataToVTK == 1)
-			filename = string("zzz",dynControls.curIter+1000); 
-				
-			saveResults2VTK(filename, testMesh, densityF, "density");
+		
+		
+		
+			solInst.dt = solControls.dt;
+			solInst.flowTime = dynControls.flowTime;
+			for i = 1 : solInst.nCells
+				solInst.densityCells[i] = testFields.densityCells[i];
+				solInst.UxCells[i] = testFields.UxCells[i];
+				solInst.UyCells[i] = testFields.UyCells[i];
+				solInst.pressureCells[i] = testFields.pressureCells[i];
+			end
+		
+			filename = string("zzz",dynControls.curIter+1000); 	
+			saveResults2VTK(filename, testMesh, testFields.densityNodes, "density");
+			@save filename solInst
 			
 		end
 		 
-
-		 
-		# display(testMesh.xNodes)
-		# display(testMesh.yNodes)
-		# display(testFields.densityNodes);
-	
 			
 	
 		if (solControls.plotResidual == 1)	
@@ -146,7 +151,8 @@ end
 			subplot(3,1,1);	
 			cla();
 			
-			tricontourf(testMesh.xNodes,testMesh.yNodes, triangles, densityF,pControls.nContours,vmin=pControls.rhoMINcont,vmax=pControls.rhoMAXcont);
+			##tricontourf(testMesh.xNodes,testMesh.yNodes, triangles, densityF,pControls.nContours,vmin=pControls.rhoMINcont,vmax=pControls.rhoMAXcont);
+			tricontourf(testMesh.xNodes,testMesh.yNodes, testMesh.triangles, testFields.densityNodes);
 			
 			set_cmap("jet");
 			xlabel("x");
@@ -157,7 +163,7 @@ end
 			subplot(3,1,2);	
 			cla();
 			
-			tricontourf(testMesh.xNodes,testMesh.yNodes, triangles, gradDensityMagNodes);
+			tricontourf(testMesh.xNodes,testMesh.yNodes, testMesh.triangles, testFieldsViscous.artViscosityNodes);
 			
 			set_cmap("jet");
 			xlabel("x");

@@ -1,9 +1,8 @@
 
-@everywhere function ComputeUPhysFromBoundaries(i,k,neib_cell, cur_cell, nx,ny)
+@everywhere @inline function ComputeUPhysFromBoundaries(i::Int32,k::Int32,neib_cell::Int32, 
+      cur_cell::Array{Float64,1}, nx::Float64,ny::Float64, y::Float64, gamma::Float64, t::Float64 )::Array{Float64,1}
 
-	bnd_cell = zeros(Float64,4);
-
-
+		bnd_cell = zeros(Float64,4);
 
 		if (neib_cell == -3) #inlet
 
@@ -14,8 +13,7 @@
 
 		elseif (neib_cell == -2) #walls
 
-	 	   	#bnd_cell = cur_cell;	
-	        #bnd_cell = updateVelocityFromCurvWall(i,k,bnd_cell,nx,ny);
+
 			bnd_cell = updateVelocityFromCurvWall(i,k,cur_cell,nx,ny);
 
 		elseif (neib_cell == -1) # outlet
@@ -24,13 +22,11 @@
 					
 		end	
 
-			
-
 	return bnd_cell; 
 end
 
 
-@everywhere function updateVelocityFromCurvWall(i::Int64, k::Int64, U, nx::Float64, ny::Float64)
+@everywhere @inline function updateVelocityFromCurvWall(i::Int32, k::Int32, U::Array{Float64,1}, nx::Float64, ny::Float64)
 
 # High-Order Accurate Implementation of Solid Wall Boundary Conditions in Curved Geometries, 
 # Lilia Krivodonova and Marsha Berger, Courant Institute of Mathematical Sciences, New York, NY 10012

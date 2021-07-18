@@ -1,12 +1,13 @@
 
 
-@everywhere  function computeInterfaceSlope(i::Int64, k::Int64, testMesh::mesh2d_shared, testFields::fields2d_shared, thermo::THERMOPHYSICS,  uLeftp::Array{Float64,1} ):: Array{Float64,1}
+@everywhere  function computeInterfaceSlope(i::Int32, k::Int32, testMesh::mesh2d_shared, testFields::fields2d_shared, thermo::THERMOPHYSICS, 
+	uLeftp::Array{Float64,1}, flowTime::Float64 ):: Array{Float64,1}
 
 	nCells = size(testMesh.cell_stiffness,1);
 	
-	ek::Int64 = testMesh.cell_stiffness[i,k]; ##; %% get right cell 
+	ek::Int32 = testMesh.cell_stiffness[i,k]; ##; %% get right cell 
 	
-	ek_type::Int64 = testMesh.mesh_connectivity[i,2];
+	ek_type::Int32 = testMesh.mesh_connectivity[i,2];
 	
 	side::Float64 = testMesh.cell_edges_length[i,k];
 	nx::Float64   = testMesh.cell_edges_Nx[i,k];
@@ -18,7 +19,7 @@
 	uRightp = zeros(Float64,4);
 
 		
-	index::Int64 = 0;
+	index::Int32 = 0;
 	if (k == 1)
 		index = 1;
 	elseif (k == 2)
@@ -83,8 +84,8 @@
 					
 	else
 					
-					
-		uRightp = ComputeUPhysFromBoundaries(i,k, ek, uLeftp, nx,ny);
+		yc::Float64 = testMesh.cell_mid_points[i,2]; 
+		uRightp = ComputeUPhysFromBoundaries(i,k, ek, uLeftp, nx,ny, yc, thermo.Gamma, flowTime );
 					
 		##uDownp = deepcopy(uLeftp);
 		##uUpp = deepcopy(uRightp);

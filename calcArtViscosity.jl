@@ -1,13 +1,13 @@
 
 
-@everywhere @inline function calcArtificialViscositySA( cellsThreadsX::SharedArray{Int64,2}, testMesh::mesh2d_shared, 
+@everywhere @inline function calcArtificialViscositySA( cellsThreadsX::SharedArray{Int32,2}, testMesh::mesh2d_shared, 
 	testfields2d::fields2d_shared, viscfields2dX::viscousFields2d_shared)
 	
 	
 	@sync @distributed for p in workers()	
 	
-		beginCell::Int64 = cellsThreadsX[p-1,1];
-		endCell::Int64 = cellsThreadsX[p-1,2];
+		beginCell::Int32 = cellsThreadsX[p-1,1];
+		endCell::Int32 = cellsThreadsX[p-1,2];
 		
 		
 		
@@ -24,7 +24,7 @@ end
 
 
 
-@everywhere @inline function calcArtificialViscosityPerThread( beginCell::Int64, endCell::Int64, 
+@everywhere @inline function calcArtificialViscosityPerThread( beginCell::Int32, endCell::Int32, 
 	testMesh::mesh2d_shared, testfields2d::fields2d_shared, viscfields2dX::viscousFields2d_shared)
 
 

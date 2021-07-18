@@ -1,6 +1,6 @@
 
 
-@everywhere function nodesDivergenceReconstructionSA( beginCell::Int64, endCell::Int64, testMesh::mesh2d_shared, 
+@everywhere function nodesDivergenceReconstructionSA( beginCell::Int32, endCell::Int32, testMesh::mesh2d_shared, 
   gradX::SharedArray{Float64,1}, gradY::SharedArray{Float64,1}, divergence::SharedArray{Float64,1})
   
   
@@ -21,7 +21,7 @@
         phiFaceX[1] = phiFaceX[2] =  phiFaceX[3] = phiFaceX[4] = 0.0;	
 		phiFaceY[1] = phiFaceY[2] =  phiFaceY[3] = phiFaceY[4] = 0.0;
 
-		numNodesInCell::Int64 = testMesh.mesh_connectivity[C,3]; ## CMatrix mesh_connectivity - first index == 1
+		numNodesInCell::Int32 = testMesh.mesh_connectivity[C,3]; ## CMatrix mesh_connectivity - first index == 1
 
         phiLeftX = phiLeftY = phiRightX = phiRightY = 0.0;
 
@@ -113,7 +113,7 @@ end ## end of function
 
 
 
-@everywhere function nodesDivergenceReconstructionFastSA( beginCell::Int64, endCell::Int64, testMesh::mesh2d_shared, 
+@everywhere function nodesDivergenceReconstructionFastSA( beginCell::Int32, endCell::Int32, testMesh::mesh2d_shared, 
   gradX::SharedArray{Float64,1}, gradY::SharedArray{Float64,1}, divergence::SharedArray{Float64,1})
   
   
@@ -134,12 +134,12 @@ end ## end of function
 		nx = zeros(Float64,4);
 		ny = zeros(Float64,4);
 
-		numNodesInCell::Int64 = testMesh.mesh_connectivity[C,3]; ## CMatrix mesh_connectivity - first index == 1
+		numNodesInCell::Int32 = testMesh.mesh_connectivity[C,3]; ## CMatrix mesh_connectivity - first index == 1
 		
 		
-		T1::Int64 = testMesh.mesh_connectivity[C,4];
-		T2::Int64 = testMesh.mesh_connectivity[C,5];
-		T3::Int64 = testMesh.mesh_connectivity[C,6];
+		T1::Int32 = testMesh.mesh_connectivity[C,4];
+		T2::Int32 = testMesh.mesh_connectivity[C,5];
+		T3::Int32 = testMesh.mesh_connectivity[C,6];
 	  
 		side[1] = testMesh.cell_edges_length[C,1];
 		side[2] = testMesh.cell_edges_length[C,2];
@@ -175,7 +175,7 @@ end ## end of function
 
 		if (numNodesInCell == 4)
 	  
-			T4::Int64 = testMesh.mesh_connectivity[C,7];
+			T4::Int32 = testMesh.mesh_connectivity[C,7];
 			side[4] = testMesh.cell_edges_length[C,4];
 			nx[4] = testMesh.cell_edges_Nx[C,4];
 			ny[4] = testMesh.cell_edges_Nx[C,4];
